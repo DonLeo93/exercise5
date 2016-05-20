@@ -392,7 +392,7 @@ public class DBClient {
 			if(connection!=null)
 				connection.close();
 		}catch(SQLException e){
-			log.error("Error when executing DB query: ", e);
+			log.error("Error when closing connection: ", e);
 		}
 	}
 }
