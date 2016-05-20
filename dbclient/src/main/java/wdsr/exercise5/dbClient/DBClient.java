@@ -272,7 +272,7 @@ public class DBClient {
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 		try {
-			String query = "SELECT s.pkey, s.name FROM Student s JOIN Enrollment e ON s.pkey=e.fkey_student GROUP BY pkey, name";
+			String query = "SELECT pkey, name FROM Student";
 			preparedStatement = connection.prepareStatement(query);
 			resultSet = preparedStatement.executeQuery();
 
@@ -281,7 +281,7 @@ public class DBClient {
 				log.info("pkey: {} name: {}",resultSet.getInt("pkey"),resultSet.getString("name"));
 			}
 		} catch (SQLException e) {
-			log.error("Error: ", e);
+			log.error("Error when executing DB query: ", e);
 		}
 	}
 	
@@ -289,7 +289,7 @@ public class DBClient {
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 		try {
-			String query = "Select pkey, name FROM student s LEFT JOIN Enrollment e ON s.pkey=e.fkey_student WHERE e.fkey_class IS NULL";
+			String query = "Select s.pkey, s.name FROM Student s WHERE NOT EXISTS (SELECT s1.pkey, s1.name FROM Student s1 JOIN Enrollment e ON s.pkey=e.fkey_student WHERE s.pkey=s1.pkey)";
 			preparedStatement = connection.prepareStatement(query);
 			resultSet = preparedStatement.executeQuery();
 			
@@ -298,7 +298,7 @@ public class DBClient {
 				log.info("pkey: {} name: {}",resultSet.getInt("pkey"),resultSet.getString("name"));
 			}
 		} catch (SQLException e) {
-			log.error("Error: ", e);
+			log.error("Error when executing DB query: ", e);
 		}
 	}
 	
@@ -315,7 +315,7 @@ public class DBClient {
 				log.info("pkey: {} name: {}",resultSet.getInt("pkey"),resultSet.getString("name"));
 			}
 		} catch (SQLException e) {
-			log.error("Error: ", e);
+			log.error("Error when executing DB query: ", e);
 		}
 	}
 	
@@ -323,7 +323,7 @@ public class DBClient {
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 		try {
-			String query = "SELECT f.name FROM Faculty f JOIN Class c ON f.pkey=c.fkey_faculty LEFT JOIN Enrollment e ON c.pkey=e.fkey_class WHERE e.fkey_student IS NULL";
+			String query = "SELECT f.name FROM Faculty f WHERE NOT EXISTS (SELECT f1.name FROM Faculty f1 JOIN Class c ON f1.pkey=c.fkey_faculty JOIN Enrollment e ON c.pkey=e.fkey_class WHERE f.name=f1.name)";
 			preparedStatement = connection.prepareStatement(query);
 			resultSet = preparedStatement.executeQuery();
 			
@@ -332,7 +332,7 @@ public class DBClient {
 				log.info("name: {}",resultSet.getString("name"));
 			}
 		} catch (SQLException e) {
-			log.error("Error: ", e);
+			log.error("Error when executing DB query: ", e);
 		}
 	}
 	
@@ -340,7 +340,7 @@ public class DBClient {
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 		try {
-			String query = "SELECT age FROM Student WHERE age=(SELECT MAX(s1.age) FROM Student s1 JOIN Enrollment e ON s1.pkey=e.fkey_student JOIN Class c ON e.fkey_class=c.pkey WHERE c.name='Introduction to labour law')";
+			String query = "SELECT MAX(s1.age) age FROM Student s1 JOIN Enrollment e ON s1.pkey=e.fkey_student JOIN Class c ON e.fkey_class=c.pkey WHERE c.name='Introduction to labour law'";
 			preparedStatement = connection.prepareStatement(query);
 			resultSet = preparedStatement.executeQuery();
 			
@@ -349,7 +349,7 @@ public class DBClient {
 				log.info("age: {}",resultSet.getInt("age"));
 			}
 		} catch (SQLException e) {
-			log.error("Error: ", e);
+			log.error("Error when executing DB query: ", e);
 		}
 	}
 	
@@ -366,7 +366,7 @@ public class DBClient {
 				log.info("name: {}",resultSet.getString("name"));
 			}
 		} catch (SQLException e) {
-			log.error("Error: ", e);
+			log.error("Error when executing DB query: ", e);
 		}
 	}
 	
@@ -383,7 +383,7 @@ public class DBClient {
 				log.info("level: {} average: {}",resultSet.getString("level"),resultSet.getInt("average"));
 			}
 		} catch (SQLException e) {
-			log.error("Error: ", e);
+			log.error("Error when executing DB query: ", e);
 		}
 	}
 	
@@ -392,7 +392,7 @@ public class DBClient {
 			if(connection!=null)
 				connection.close();
 		}catch(SQLException e){
-			log.error("Error: ", e);
+			log.error("Error when executing DB query: ", e);
 		}
 	}
 }
