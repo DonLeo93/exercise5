@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,7 @@ public class DBClient {
 			connection = DriverManager.getConnection(URL, User, "");
 			log.info("Connected");
 		} catch (SQLException e) {
-			log.error("Error: ", e);
+			log.error("Error durring connection: ", e);
 		}
 	}
 	
@@ -68,7 +67,7 @@ public class DBClient {
 			log.info("Table 'Enrollment' has been created",preparedStatement.executeUpdate());
 
 		} catch (SQLException e) {
-			log.error("Error: ", e);
+			log.error("Error durring creating tables: ", e);
 		}
 	}
 	
@@ -263,7 +262,7 @@ public class DBClient {
 	        }
 			
 		} catch (SQLException e) {
-			log.error("Error: ", e);
+			log.error("Error durring inserting values to tables: ", e);
 		}
 	}
 	
@@ -281,7 +280,7 @@ public class DBClient {
 				log.info("pkey: {} name: {}",resultSet.getInt("pkey"),resultSet.getString("name"));
 			}
 		} catch (SQLException e) {
-			log.error("Error when executing DB query: ", e);
+			log.error("Error when executing DB query #1: ", e);
 		}
 	}
 	
@@ -289,7 +288,7 @@ public class DBClient {
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 		try {
-			String query = "Select s.pkey, s.name FROM Student s WHERE NOT EXISTS (SELECT s1.pkey, s1.name FROM Student s1 JOIN Enrollment e ON s.pkey=e.fkey_student WHERE s.pkey=s1.pkey)";
+			String query = "Select s.pkey, s.name FROM Student s WHERE s.pkey NOT IN (SELECT fkey_student FROM Enrollment)";
 			preparedStatement = connection.prepareStatement(query);
 			resultSet = preparedStatement.executeQuery();
 			
@@ -298,7 +297,7 @@ public class DBClient {
 				log.info("pkey: {} name: {}",resultSet.getInt("pkey"),resultSet.getString("name"));
 			}
 		} catch (SQLException e) {
-			log.error("Error when executing DB query: ", e);
+			log.error("Error when executing DB query #2: ", e);
 		}
 	}
 	
@@ -315,7 +314,7 @@ public class DBClient {
 				log.info("pkey: {} name: {}",resultSet.getInt("pkey"),resultSet.getString("name"));
 			}
 		} catch (SQLException e) {
-			log.error("Error when executing DB query: ", e);
+			log.error("Error when executing DB query #3: ", e);
 		}
 	}
 	
@@ -323,7 +322,7 @@ public class DBClient {
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 		try {
-			String query = "SELECT f.name FROM Faculty f WHERE NOT EXISTS (SELECT f1.name FROM Faculty f1 JOIN Class c ON f1.pkey=c.fkey_faculty JOIN Enrollment e ON c.pkey=e.fkey_class WHERE f.name=f1.name)";
+			String query = "SELECT f.name FROM Faculty f WHERE f.name NOT IN (SELECT f1.name FROM Faculty f1 JOIN Class c ON f1.pkey=c.fkey_faculty JOIN Enrollment e ON c.pkey=e.fkey_class)";
 			preparedStatement = connection.prepareStatement(query);
 			resultSet = preparedStatement.executeQuery();
 			
@@ -332,7 +331,7 @@ public class DBClient {
 				log.info("name: {}",resultSet.getString("name"));
 			}
 		} catch (SQLException e) {
-			log.error("Error when executing DB query: ", e);
+			log.error("Error when executing DB query #4: ", e);
 		}
 	}
 	
@@ -349,7 +348,7 @@ public class DBClient {
 				log.info("age: {}",resultSet.getInt("age"));
 			}
 		} catch (SQLException e) {
-			log.error("Error when executing DB query: ", e);
+			log.error("Error when executing DB query #5: ", e);
 		}
 	}
 	
@@ -366,7 +365,7 @@ public class DBClient {
 				log.info("name: {}",resultSet.getString("name"));
 			}
 		} catch (SQLException e) {
-			log.error("Error when executing DB query: ", e);
+			log.error("Error when executing DB query #6: ", e);
 		}
 	}
 	
@@ -383,7 +382,7 @@ public class DBClient {
 				log.info("level: {} average: {}",resultSet.getString("level"),resultSet.getInt("average"));
 			}
 		} catch (SQLException e) {
-			log.error("Error when executing DB query: ", e);
+			log.error("Error when executing DB query #7: ", e);
 		}
 	}
 	
